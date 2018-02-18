@@ -66,6 +66,20 @@ $app->put('/user/:id', function($user_id) use ($app) {
     echoRespnse(200, $response);
 });
 
+$app->post('/user/updateGCM', function() use ($app) {
+    global $app;
+
+    verifyRequiredParams(array('user_id', 'gcm_registration_id'));
+    
+    $user_id = $app->request->post('user_id');
+    $gcm_registration_id = $app->request->post('gcm_registration_id');
+
+    $db = new DbHandler();
+    $response = $db->updateGcmID($user_id, $gcm_registration_id);
+
+    echoRespnse(200, $response);
+});
+
 /* * *
  * fetching all chat rooms
  */

@@ -8,6 +8,7 @@ public class EndPoints {
     public static final String BASE_URL = "http://192.168.100.5/android_login_api/v1";
     public static final String LOGIN = BASE_URL + "/user/login";
     public static final String REGISTER = BASE_URL + "/user/register";
+    public static final String UPDATEGCM = BASE_URL + "/user/updateGCM";
     public static final String USER = BASE_URL + "/user/_ID_";
     public static final String CHAT_ROOMS = BASE_URL + "/chat_rooms";
     public static final String CHAT_THREAD = BASE_URL + "/chat_rooms/_ID_";

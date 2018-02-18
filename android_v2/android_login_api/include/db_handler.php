@@ -98,7 +98,7 @@ class DbHandler {
         } else {
             // Failed to update user
             $response["error"] = true;
-            $response["message"] = "Failed to update GCM registration ID";
+            $response["message"] = "Failed to update GCM registration ID" . $user_id . "gds";
             $stmt->error;
         }
         $stmt->close();

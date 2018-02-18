@@ -8,7 +8,13 @@ CREATE TABLE chat_rooms (
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (chat_room_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
- 
+
+INSERT INTO `chat_rooms` (`chat_room_id`, `name`, `created_at`) VALUES
+(1, 'Room 1', '2018-02-02 06:57:40'),
+(2, 'Room 2', '2016-02-02 06:57:40'),
+(3, 'Room 3', '2016-02-02 06:57:40'),
+(4, 'Room 4', '2016-02-02 06:57:40'); 
+
 CREATE TABLE messages (
   message_id int(11) NOT NULL AUTO_INCREMENT,
   chat_room_id int(11) NOT NULL,
@@ -20,7 +26,7 @@ CREATE TABLE messages (
  
 CREATE TABLE users(
   user_id int(11) AUTO_INCREMENT,
-  gcm_registration_id varchar(50) NOT NULL,
+  gcm_registration_id text NOT NULL,
   name varchar(50) NOT NULL,
   email varchar(100) NOT NULL,
   encrypted_password varchar(80) NOT NULL,

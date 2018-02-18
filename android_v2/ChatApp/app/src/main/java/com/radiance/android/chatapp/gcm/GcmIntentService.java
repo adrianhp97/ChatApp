@@ -99,11 +99,12 @@ public class GcmIntentService extends IntentService {
             return;
         }
 
-        String endPoint = EndPoints.USER.replace("_ID_", user.getId());
+        final String user_id = user.getId();
+        String endPoint = EndPoints.UPDATEGCM;
 
         Log.e(TAG, "endpoint: " + endPoint);
 
-        StringRequest strReq = new StringRequest(Request.Method.PUT,
+        StringRequest strReq = new StringRequest(Request.Method.POST,
                 endPoint, new Response.Listener<String>() {
 
             @Override
@@ -140,6 +141,7 @@ public class GcmIntentService extends IntentService {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", user_id);
                 params.put("gcm_registration_id", token);
 
                 Log.e(TAG, "params: " + params.toString());

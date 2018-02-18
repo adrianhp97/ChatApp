@@ -23,13 +23,13 @@ public class MyPreferenceManager {
     int PRIVATE_MODE = 0;
 
     // Sharedpref file name
-    private static final String PREF_NAME = "androidhive_gcm";
+    private static final String PREF_NAME = "ChatApp";
 
     // All Shared Preferences Keys
-    private static final String KEY_USER_ID = "user_id";
-    private static final String KEY_USER_NAME = "user_name";
-    private static final String KEY_USER_EMAIL = "user_email";
-    private static final String KEY_NOTIFICATIONS = "notifications";
+    private static final String KEY_USER_ID = "";
+    private static final String KEY_USER_NAME = "";
+    private static final String KEY_USER_EMAIL = "";
+    private static final String KEY_NOTIFICATIONS = "";
 
     // Constructor
     public MyPreferenceManager(Context context) {
@@ -81,7 +81,9 @@ public class MyPreferenceManager {
     }
 
     public void clear() {
-        editor.clear();
-        editor.commit();
+        _context.getSharedPreferences("ChatApp", 0).edit().clear().commit();
+
+//        editor.clear();
+//        editor.commit();
     }
 }

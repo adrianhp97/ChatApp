@@ -153,6 +153,8 @@ public class LoginActivity extends Activity {
                         // storing user in shared preferences
                         MyApplication.getInstance().getPrefManager().storeUser(user);
 
+                        Log.e(TAG, "User: " + user.toString());
+
                         // start main activity
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         finish();

@@ -26,10 +26,10 @@ public class MyPreferenceManager {
     private static final String PREF_NAME = "ChatApp";
 
     // All Shared Preferences Keys
-    private static final String KEY_USER_ID = "";
-    private static final String KEY_USER_NAME = "";
-    private static final String KEY_USER_EMAIL = "";
-    private static final String KEY_NOTIFICATIONS = "";
+    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_USER_NAME = "name";
+    private static final String KEY_USER_EMAIL = "email";
+    private static final String KEY_NOTIFICATIONS = "notification";
 
     // Constructor
     public MyPreferenceManager(Context context) {

@@ -80,6 +80,37 @@ $app->post('/user/updateGCM', function() use ($app) {
     echoRespnse(200, $response);
 });
 
+// Create Chatroom 
+$app->post('/chat_room/create', function() use ($app) {
+    // check for required params
+    verifyRequiredParams(array('name'));
+
+    // reading post params
+    $name = $app->request->post('name');
+
+    $db = new DbHandler();
+    $response = $db->createRoom($name);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
+// Delete Chatroom 
+$app->post('/chat_room/delete', function() use ($app) {
+    // check for required params
+    verifyRequiredParams(array('chat_room_id'));
+
+    // reading post params
+    $chat_room_id = $app->request->post('chat_room_id');
+
+    $db = new DbHandler();
+    $response = $db->deleteRoom($chat_room_id);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
+
 /* * *
  * fetching all chat rooms
  */

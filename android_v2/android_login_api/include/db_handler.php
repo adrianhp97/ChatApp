@@ -49,6 +49,70 @@ class DbHandler {
         return $response;
     }
 
+     // creating new room if not existed
+    public function createRoom($name) {
+        $response = array();
+ 
+        // First check if room already existed in db
+        if (!$this->isRoomExists($name)) {
+            // insert query
+            $stmt = $this->conn->prepare("INSERT INTO chat_rooms(name) values(?)");
+            $stmt->bind_param("s", $name);
+ 
+            $result = $stmt->execute();
+ 
+            $stmt->close();
+ 
+            // Check for successful insertion
+            if ($result) {
+                // User successfully inserted
+                $response["error"] = false;
+                $response["chat_room"] = $this->getRoomByName($name);
+            } else {
+                // Failed to create user
+                $response["error"] = true;
+                $response["message"] = "Oops! An error occurred while registering";
+            }
+        } else {
+            // User with same email already existed in the db
+            $response["error"] = true;
+            $response["chat_room"] = $this->getRoomByName($name);
+        }
+ 
+        return $response;
+    }
+
+    public function deleteRoom($name) {
+        $response = array();
+ 
+        // First check if room already existed in db
+        if ($this->isRoomExists($name)) {
+            // delete query
+            $stmt = $this->conn->prepare("INSERT INTO chat_rooms(name) values(?)");
+            $stmt->bind_param("s", $name);
+ 
+            $result = $stmt->execute();
+ 
+            $stmt->close();
+ 
+            // Check for successful insertion
+            if ($result) {
+                // User successfully inserted
+                $response["error"] = t;
+                $response["chat_room"] = $this->getRoomByName($name);
+            } else {
+                // Failed to create user
+                $response["error"] = true;
+                $response["message"] = "Oops! An error occurred while registering";
+            }
+        } else {
+            $response["error"] = true;
+            $response["user"] = $this->getRoomByName($name);
+        }
+ 
+        return $response;
+    }
+
     // creating new user if not existed
     public function loginUser($email, $password) {
         $response = array();
@@ -226,6 +290,16 @@ class DbHandler {
         $stmt->close();
         return $num_rows > 0;
     }
+
+    private function isRoomExists($name) {
+        $stmt = $this->conn->prepare("SELECT chat_room_id from chat_rooms WHERE name = ?");
+        $stmt->bind_param("s", $name);
+        $stmt->execute();
+        $stmt->store_result();
+        $num_rows = $stmt->num_rows;
+        $stmt->close();
+        return $num_rows > 0;
+    }
  
     /**
      * Fetching user by email
@@ -249,6 +323,25 @@ class DbHandler {
             return NULL;
         }
     }
+
+    public function getRoomByName($name) {
+        $stmt = $this->conn->prepare("SELECT chat_room_id, name, created_at FROM chat_rooms WHERE name = ?");
+        $stmt->bind_param("s", $name);
+        if ($stmt->execute()) {
+            // $user = $stmt->get_result()->fetch_assoc();
+            $stmt->bind_result($chat_room_id, $name, $created_at);
+            $stmt->fetch();
+            $chat_room = array();
+            $chat_room["chat_room_id"] = $chat_room_id;
+            $chat_room["name"] = $name;
+            $chat_room["created_at"] = $created_at;
+            $stmt->close();
+            return $chat_room;
+        } else {
+            return NULL;
+        }
+    }
+
 
     /**
      * Encrypting password

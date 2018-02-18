@@ -158,6 +158,15 @@ public class ChatRoomActivity extends AppCompatActivity {
             return;
         }
 
+        final User user = MyApplication.getInstance().getPrefManager().getUser();
+        if (user == null) {
+            // TODO
+            // user not found, redirecting him to login screen
+            return;
+        }
+
+        final String user_id = user.getId();
+
         String endPoint = EndPoints.CHAT_ROOM_MESSAGE.replace("_ID_", chatRoomId);
 
         Log.e(TAG, "endpoint: " + endPoint);
@@ -224,7 +233,7 @@ public class ChatRoomActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", MyApplication.getInstance().getPrefManager().getUser().getId());
+                params.put("user_id", user_id);
                 params.put("message", message);
 
                 Log.e(TAG, "Params: " + params.toString());

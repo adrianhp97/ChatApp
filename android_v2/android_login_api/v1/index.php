@@ -84,12 +84,31 @@ $app->post('/user/updateGCM', function() use ($app) {
 $app->post('/chat_room/create', function() use ($app) {
     // check for required params
     verifyRequiredParams(array('name'));
+    verifyRequiredParams(array('password'));
 
     // reading post params
     $name = $app->request->post('name');
+    $password = $app->request->post('password');
 
     $db = new DbHandler();
-    $response = $db->createRoom($name);
+    $response = $db->createRoom($name, $password);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
+// Create Chatroom 
+$app->post('/chat_room/join', function() use ($app) {
+    // check for required params
+    verifyRequiredParams(array('name'));
+    verifyRequiredParams(array('password'));
+
+    // reading post params
+    $name = $app->request->post('name');
+    $password = $app->request->post('password');
+
+    $db = new DbHandler();
+    $response = $db->joinRoom($name, $password);
 
     // echo json response
     echoRespnse(200, $response);
@@ -120,6 +139,31 @@ $app->get('/chat_rooms', function() {
 
     // fetching all user tasks
     $result = $db->getAllChatrooms();
+
+    $response["error"] = false;
+    $response["chat_rooms"] = array();
+
+    // pushing single chat room into array
+    while ($chat_room = $result->fetch_assoc()) {
+        $tmp = array();
+        $tmp["chat_room_id"] = $chat_room["chat_room_id"];
+        $tmp["name"] = $chat_room["name"];
+        $tmp["created_at"] = $chat_room["created_at"];
+        array_push($response["chat_rooms"], $tmp);
+    }
+
+    echoRespnse(200, $response);
+});
+
+/* * *
+ * fetching all chat rooms by user
+ */
+$app->get('/chat_room/:id', function($user_id) use ($app) {
+    $response = array();
+    $db = new DbHandler();
+
+    // fetching all user tasks
+    $result = $db->getAllChatroomsById($user_id);
 
     $response["error"] = false;
     $response["chat_rooms"] = array();

@@ -322,6 +322,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_logout:
                 MyApplication.getInstance().logout();
                 break;
+            case R.id.create_room:
+                Intent intentSettings = new Intent(this, CreateRoomActivity.class);
+                startActivity(intentSettings);
+                break;
         }
         return super.onOptionsItemSelected(menuItem);
     }

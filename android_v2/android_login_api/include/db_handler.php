@@ -50,14 +50,19 @@ class DbHandler {
     }
 
      // creating new room if not existed
-    public function createRoom($name) {
+    public function createRoom($name, $password) {
         $response = array();
  
         // First check if room already existed in db
         if (!$this->isRoomExists($name)) {
             // insert query
-            $stmt = $this->conn->prepare("INSERT INTO chat_rooms(name) values(?)");
-            $stmt->bind_param("s", $name);
+            $uuid = uniqid('', true);
+            $hash = $this->hashSSHA($password);
+            $encrypted_password = $hash["encrypted"]; // encrypted password
+            $salt = $hash["salt"]; // salt
+    
+            $stmt = $this->conn->prepare("INSERT INTO chat_rooms(name, encrypted_password, salt) values(?, ?, ?)");
+            $stmt->bind_param("sss", $name, $encrypted_password, $salt);
  
             $result = $stmt->execute();
  
@@ -144,6 +149,42 @@ class DbHandler {
             // Failed to login
                 $response["error"] = true;
                 $response["message"] = "Oops! There's no user with that email";
+        }
+ 
+        return $response;
+    }
+
+    // join room if existed
+    public function joinRoom($name, $password) {
+        $response = array();
+
+        // First check if user already existed in db
+        if ($this->isRoomExists($name)) {
+            // insert query
+            $stmt = $this->conn->prepare("SELECT encrypted_password, salt from chat_rooms WHERE name = ?");
+            $stmt->bind_param("s", $name);
+ 
+            $result = $stmt->execute();
+            $user = $stmt->get_result()->fetch_assoc();
+ 
+            $stmt->close();
+
+            $salt = $user['salt'];
+            $encrypted_password = $user['encrypted_password'];
+            $hash = $this->checkhashSSHA($salt, $password);
+ 
+            if ($encrypted_password == $hash) {
+                $response["error"] = false;
+                $response["chat_room"] = $this->getRoomByName($name);
+            } else {
+                // Failed to login
+                $response["error"] = true;
+                $response["message"] = "Oops! Failed to join the group";
+            }
+        } else {
+            // Failed to login
+                $response["error"] = true;
+                $response["message"] = "Oops! There's no room with that name";
         }
  
         return $response;
@@ -265,6 +306,16 @@ class DbHandler {
         $stmt->close();
         return $tasks;
     }
+
+    // fetching all chat rooms
+    public function getAllChatroomsById($user_id) {
+        $stmt = $this->conn->prepare("SELECT * FROM chat_rooms cr LEFT JOIN chat_room_by_user crbu ON cr.chat_room_id = crbu.chat_room_id WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);        
+        $stmt->execute();
+        $tasks = $stmt->get_result();
+        $stmt->close();
+        return $tasks;
+    }
  
     // fetching single chat room by id
     function getChatRoom($chat_room_id) {
@@ -334,6 +385,8 @@ class DbHandler {
             $chat_room = array();
             $chat_room["chat_room_id"] = $chat_room_id;
             $chat_room["name"] = $name;
+            $chat_room["encrypted_password"] = $encrypted_password;
+            $chat_room["salt"] = $salt;
             $chat_room["created_at"] = $created_at;
             $stmt->close();
             return $chat_room;

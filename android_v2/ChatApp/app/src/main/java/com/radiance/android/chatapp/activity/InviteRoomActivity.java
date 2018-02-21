@@ -28,16 +28,18 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JoinRoomActivity extends AppCompatActivity {
-    private static final String TAG = JoinRoomActivity.class.getSimpleName();
-    private Button btnJoinNewRoom;
-    private EditText inputRoomName;
-    private EditText inputRoomPassword;
+public class InviteRoomActivity extends AppCompatActivity {
+    private static final String TAG = InviteRoomActivity.class.getSimpleName();
+    private String chatRoomId;
+    private Button btnInvite;
+    private EditText inputEmail;
     private ProgressDialog pDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_join_room);
+        setContentView(R.layout.activity_invite_room);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,20 +47,21 @@ public class JoinRoomActivity extends AppCompatActivity {
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
-        inputRoomName = (EditText) findViewById(R.id.inputRoomName);
-        inputRoomPassword = (EditText) findViewById(R.id.inputRoomPassword);
-        btnJoinNewRoom = (Button) findViewById(R.id.btnJoinNewRoom);
+        Intent intent = getIntent();
+        chatRoomId = intent.getStringExtra("chat_room_id");
 
-        btnJoinNewRoom.setOnClickListener(new View.OnClickListener() {
+        inputEmail = (EditText) findViewById(R.id.email);
+        btnInvite = (Button) findViewById(R.id.btnInvite);
+
+        btnInvite.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                String name = inputRoomName.getText().toString().trim();
-                String password = inputRoomPassword.getText().toString().trim();
+                String email = inputEmail.getText().toString().trim();
 
                 // Check for empty data in the form
-                if (!name.isEmpty()) {
-                    // login user
-                    joinRoom(name, password);
+                if (!email.isEmpty()) {
+                    // invite user
+                    inviteRoom(email);
                 } else {
                     // Prompt user to enter credentials
                     Toast.makeText(getApplicationContext(),
@@ -68,33 +71,22 @@ public class JoinRoomActivity extends AppCompatActivity {
             }
 
         });
-
     }
 
-    private void joinRoom(final String name, final String password) {
+    private void inviteRoom(final String email) {
         // Tag used to cancel the request
-        String tag_string_req = "req_join_room";
+        String tag_string_req = "req_invite_room";
 
-        pDialog.setMessage("Join new Room ...");
+        pDialog.setMessage("Invite to Room ...");
         showDialog();
 
-        final User user = MyApplication.getInstance().getPrefManager().getUser();
-        if (user == null) {
-            // TODO
-            // user not found, redirecting him to login screen
-            return;
-        }
-
-        final String user_id = user.getId();
-
-        String endPoint = EndPoints.JOIN_ROOM.replace("_ID_", user_id);
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                endPoint, new Response.Listener<String>() {
+                EndPoints.INVITE_ROOM, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Create Room Response: " + response.toString());
+                Log.d(TAG, "Invite Room Response: " + response.toString());
                 hideDialog();
 
                 try {
@@ -106,10 +98,7 @@ public class JoinRoomActivity extends AppCompatActivity {
                     if (!error) {
                         // room successfully
                         Log.d(TAG, "noError");
-//
-                        JSONObject roomObj = jObj.getJSONObject("chat_room");
 
-                        Log.e(TAG, "Create Room: " + roomObj.toString());
                         Log.d(TAG, "wanna run main");
                         // start main activity
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -143,8 +132,8 @@ public class JoinRoomActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("name", name);
-                params.put("password", password);
+                params.put("email", email);
+                params.put("chat_room_id", chatRoomId);
 
                 return params;
             }

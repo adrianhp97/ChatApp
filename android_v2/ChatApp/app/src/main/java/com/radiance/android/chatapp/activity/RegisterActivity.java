@@ -3,6 +3,7 @@ package com.radiance.android.chatapp.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -140,10 +141,30 @@ public class RegisterActivity extends Activity {
                                 userObj.getString("name"),
                                 userObj.getString("email"));
 
+//                        String email = userObj.getString("email");
+//
+//                        String verifiedLink = EndPoints.VERIFIED.replace("_ID_", user.getId()).replace("_PASSWORD_", userObj.getString("encrypted_password"));
+
                         // storing user in shared preferences
                         MyApplication.getInstance().getPrefManager().storeUser(user);
 
-                        Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "User successfully registered. Verified your email!", Toast.LENGTH_LONG).show();
+
+//                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+//                                "mailto", email, null));
+//                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Verified Account");
+//                        emailIntent.putExtra(Intent.EXTRA_TEXT, verifiedLink);
+//                        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+
+//                        try {
+//                            GMailSender sender = new GMailSender("username@gmail.com", "password");
+//                            sender.sendMail("This is Subject",
+//                                    "This is Body",
+//                                    "user@gmail.com",
+//                                    "user@yahoo.com");
+//                        } catch (Exception e) {
+//                            Log.e("SendMail", e.getMessage(), e);
+//                        }
 
                         // Launch login activity
                         Intent intent = new Intent(

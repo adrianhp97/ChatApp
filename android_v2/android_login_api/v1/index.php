@@ -29,6 +29,15 @@ $app->post('/user/login', function() use ($app) {
     echoRespnse(200, $response);
 });
 
+// User login
+$app->get('/user/verified/:id/:password', function($user_id, $password) use ($app) {
+    $db = new DbHandler();
+    $response = $db->verifiedUser($user_id, $password);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
 // User register
 $app->post('/user/register', function() use ($app) {
     // check for required params
@@ -97,8 +106,8 @@ $app->post('/chat_room/create', function() use ($app) {
     echoRespnse(200, $response);
 });
 
-// Create Chatroom 
-$app->post('/chat_room/join', function() use ($app) {
+// Join Chatroom 
+$app->post('/chat_room/join/:id', function($user_id) use ($app) {
     // check for required params
     verifyRequiredParams(array('name'));
     verifyRequiredParams(array('password'));
@@ -108,7 +117,24 @@ $app->post('/chat_room/join', function() use ($app) {
     $password = $app->request->post('password');
 
     $db = new DbHandler();
-    $response = $db->joinRoom($name, $password);
+    $response = $db->joinRoom($user_id, $name, $password);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
+// Invite Chatroom 
+$app->post('/chat_room/invite/', function() use ($app) {
+    // check for required params
+    verifyRequiredParams(array('chat_room_id'));
+    verifyRequiredParams(array('email'));
+
+    // reading post params
+    $chat_room_id = $app->request->post('chat_room_id');
+    $email = $app->request->post('email');
+
+    $db = new DbHandler();
+    $response = $db->inviteToRoom($email, $chat_room_id);
 
     // echo json response
     echoRespnse(200, $response);
@@ -158,7 +184,7 @@ $app->get('/chat_rooms', function() {
 /* * *
  * fetching all chat rooms by user
  */
-$app->get('/chat_room/:id', function($user_id) use ($app) {
+$app->get('/chat_rooms_by_id/:id', function($user_id) use ($app) {
     $response = array();
     $db = new DbHandler();
 
@@ -524,6 +550,52 @@ function verifyRequiredParams($required_fields) {
         $app->stop();
     }
 }
+
+/* * *
+ * create event
+ */
+$app->post('/events/new_event', function() use ($app) {
+    // check for required params
+    verifyRequiredParams(array('name'));
+
+    // reading post params
+    $name = $app->request->post('name');
+    $start = $app->request->post('start_at');
+    $end = $app->request->post('end_at');
+    $location = $app->request->post('location');
+
+    $db = new DbHandler();
+    $response = $db->createEvent($name, $start, $end, $location);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
+/* * *
+ * fetching all events
+ */
+$app->get('/events', function() {
+    $response = array();
+    $db = new DbHandler();
+
+    // fetching all user tasks
+    $result = $db->getAllEvents();
+
+    $response["error"] = false;
+    $response["events"] = array();
+
+    // pushing single event into array
+    while ($event = $result->fetch_assoc()) {
+        $tmp = array();
+        $tmp["event_id"] = $event["event_id"];
+        $tmp["name"] = $event["name"];
+        $tmp["start_at"] = $event["start_at"];
+        $tmp["created_at"] = $event["created_at"];
+        array_push($response["events"], $tmp);
+    }
+
+    echoRespnse(200, $response);
+});
 
 /**
  * Validating email address

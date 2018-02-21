@@ -34,24 +34,14 @@ public class CreateRoomActivity extends AppCompatActivity {
             }
         });
 
-//        btnInvite.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View view) {
-//                Intent i = new Intent(getApplicationContext(),
-//                        RegisterActivity.class);
-//                startActivity(i);
-//                finish();
-//            }
-//        });
-//
-//        btnJoin.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View view) {
-//                Intent i = new Intent(getApplicationContext(),
-//                        RegisterActivity.class);
-//                startActivity(i);
-//                finish();
-//            }
-//        });
+        btnJoin.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(),
+                        JoinRoomActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 }

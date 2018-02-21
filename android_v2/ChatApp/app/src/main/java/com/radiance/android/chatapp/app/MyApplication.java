@@ -1,8 +1,15 @@
 package com.radiance.android.chatapp.app;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,11 +29,48 @@ public class MyApplication extends Application {
 
     private MyPreferenceManager pref;
 
+    private SensorEventListener lightSensorEventListener = new SensorEventListener() {
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+
+        }
+
+        // get sensor update and reading
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // TODO Auto-generated method stub
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                float currentReading = event.values[0];
+
+            }
+        }
+
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        // check sensor available in devise. if available then get reading
+        if (lightSensor == null) {
+            Toast.makeText(getApplicationContext(), "No Sensor",
+                    Toast.LENGTH_SHORT).show();
+            // Toast.makeText(AndroidLightSensorActivity.this,
+            // "No Light Sensor! quit-", Toast.LENGTH_LONG).show();
+        } else {
+            float max = lightSensor.getMaximumRange();
+
+            sensorManager.registerListener(lightSensorEventListener,
+                    lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
+
+
 
     public static synchronized MyApplication getInstance() {
         return mInstance;

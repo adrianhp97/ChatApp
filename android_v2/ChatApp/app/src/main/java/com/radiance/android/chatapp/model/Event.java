@@ -7,15 +7,17 @@ import java.io.Serializable;
  */
 
 public class Event implements Serializable {
-    String id, name, startAt, timestamp;
+    String id, name, startAt, endAt, location, timestamp;
 
     public Event() {
     }
 
-    public Event(String id, String name, String startAt, String timestamp) {
+    public Event(String id, String name, String startAt, String endAt, String location, String timestamp) {
         this.id = id;
         this.name = name;
         this.startAt = startAt;
+        this.endAt = endAt;
+        this.location = location;
         this.timestamp = timestamp;
     }
 

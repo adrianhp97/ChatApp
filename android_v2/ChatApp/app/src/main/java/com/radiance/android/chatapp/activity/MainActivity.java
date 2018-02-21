@@ -42,6 +42,7 @@ import com.radiance.android.chatapp.gcm.NotificationUtils;
 import com.radiance.android.chatapp.helper.SimpleDividerItemDecoration;
 import com.radiance.android.chatapp.model.ChatRoom;
 import com.radiance.android.chatapp.model.Message;
+import com.radiance.android.chatapp.model.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -129,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
          * */
         if (checkPlayServices()) {
             registerGCM();
-            fetchChatRooms();
+//            fetchChatRooms();
+            fetchChatRoomsById();
         }
     }
 
@@ -193,6 +195,74 @@ public class MainActivity extends AppCompatActivity {
                     // check for error flag
                     if (obj.getBoolean("error") == false) {
                         JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
+                        for (int i = 0; i < chatRoomsArray.length(); i++) {
+                            JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
+                            ChatRoom cr = new ChatRoom();
+                            cr.setId(chatRoomsObj.getString("chat_room_id"));
+                            cr.setName(chatRoomsObj.getString("name"));
+                            cr.setLastMessage("");
+                            cr.setUnreadCount(0);
+                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
+
+                            chatRoomArrayList.add(cr);
+                        }
+
+                    } else {
+                        // error in fetching chat rooms
+                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+                    }
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing error: " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Json parse error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                mAdapter.notifyDataSetChanged();
+
+                // subscribing to all chat room topics
+                subscribeToAllTopics();
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                Log.e(TAG, "Volley error: " + error.getMessage() + ", code: " + networkResponse);
+                Toast.makeText(getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void fetchChatRoomsById() {
+
+        final User user = MyApplication.getInstance().getPrefManager().getUser();
+        if (user == null) {
+            // TODO
+            // user not found, redirecting him to login screen
+            return;
+        }
+
+        final String user_id = user.getId();
+        String endPoint = EndPoints.CHAT_ROOMS_BY_ID.replace("_ID_", user_id);
+        Log.e(TAG, "link: " + endPoint);
+
+        StringRequest strReq = new StringRequest(Request.Method.GET,
+                endPoint, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "get object: " + response);
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    // check for error flag
+                    if (obj.getBoolean("error") == false) {
+                        JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
+                        Log.e(TAG, "object: " + chatRoomsArray.toString());
                         for (int i = 0; i < chatRoomsArray.length(); i++) {
                             JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
                             ChatRoom cr = new ChatRoom();
@@ -326,6 +396,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intentSettings = new Intent(this, CreateRoomActivity.class);
                 startActivity(intentSettings);
                 break;
+            case R.id.action_events:
+                Intent intentEvents = new Intent(this, EventsActivity.class);
+                startActivity(intentEvents);
+                return true;
         }
         return super.onOptionsItemSelected(menuItem);
     }

@@ -12,4 +12,9 @@
         android:orderInCategory="100"
         android:title="@string/create_room"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_events"
+        android:orderInCategory="10"
+        android:title="Events"
+        app:showAsAction="never" />
 </menu>

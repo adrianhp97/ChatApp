@@ -181,5 +181,11 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_create_new_room">CreateNewRoomActivity</string>
     <string name="title_activity_join_room">JoinRoomActivity</string>
+    <string name="title_activity_invite_room">InviteRoomActivity</string>
+
+    <!-- Event -->
+    <string name="tab_events">Events</string>
+    <string name="invite_room_chat">Invite</string>
+    <string name="err_msg_general">Enter valid input</string>
 
 </resources>

@@ -3,6 +3,7 @@
     package="com.radiance.android.chatapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -126,6 +127,22 @@
                 android:value="com.radiance.android.chatapp.activity.CreateRoomActivity" />
         </activity>
         <activity
+            android:name=".activity.EventsActivity"
+            android:label="Events"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activity.CreateEventActivity"
+            android:label="Create Event"
+            android:parentActivityName=".activity.EventsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.EventsActivity" />
+        </activity>
+        <activity
             android:name=".activity.JoinRoomActivity"
             android:label="@string/title_activity_join_room"
             android:parentActivityName=".activity.CreateRoomActivity"
@@ -134,6 +151,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.radiance.android.chatapp.activity.CreateRoomActivity" />
         </activity>
+        <activity
+            android:name=".activity.InviteRoomActivity"
+            android:label="@string/title_activity_invite_room"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

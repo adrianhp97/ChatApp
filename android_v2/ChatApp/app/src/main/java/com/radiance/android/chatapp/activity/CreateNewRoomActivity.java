@@ -41,17 +41,6 @@ public class CreateNewRoomActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
@@ -100,22 +89,24 @@ public class CreateNewRoomActivity extends AppCompatActivity {
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
-
+                    Log.d(TAG, "isError");
+                    hideDialog();
                     // Check for error node in json
                     if (!error) {
-                        // room successfully logged in
-
+                        // room successfully
+                        Log.d(TAG, "noError");
+//
                         JSONObject roomObj = jObj.getJSONObject("chat_room");
 
                         Log.e(TAG, "Create Room: " + roomObj.toString());
-
+                        Log.d(TAG, "wanna run main");
                         // start main activity
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         finish();
 
                     } else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
+                        // Error in create room. Get the error message
+                        String errorMsg = jObj.getString("message");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
                     }

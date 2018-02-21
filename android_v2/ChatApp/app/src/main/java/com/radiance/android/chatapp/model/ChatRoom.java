@@ -3,10 +3,10 @@ package com.radiance.android.chatapp.model;
 import java.io.Serializable;
 
 public class ChatRoom implements Serializable {
-    String id, name, encrypted_password, lastMessage, timestamp;
+    String id, name, lastMessage, timestamp;
     int unreadCount;
 
-    public ChatRoom(String chat_room_id, String name, String encrypted_password, String create_at) {
+    public ChatRoom(String chat_room_id, String name, String create_at) {
     }
 
     public ChatRoom(String id, String name, String lastMessage, String timestamp, int unreadCount) {
@@ -17,20 +17,16 @@ public class ChatRoom implements Serializable {
         this.unreadCount = unreadCount;
     }
 
+    public ChatRoom() {
+
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPassword() {
-        return encrypted_password;
-    }
-
-    public void setPassword(String encrypted_password) {
-        this.encrypted_password = encrypted_password;
     }
 
     public String getName() {

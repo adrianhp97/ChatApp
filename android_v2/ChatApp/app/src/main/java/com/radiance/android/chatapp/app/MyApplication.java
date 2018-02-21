@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -43,7 +44,8 @@ public class MyApplication extends Application {
             // TODO Auto-generated method stub
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
                 float currentReading = event.values[0];
-
+                int progress = (int) (currentReading * 255);
+                android.provider.Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS, progress);
             }
         }
 
@@ -64,7 +66,7 @@ public class MyApplication extends Application {
             // "No Light Sensor! quit-", Toast.LENGTH_LONG).show();
         } else {
             float max = lightSensor.getMaximumRange();
-
+            Log.e(TAG, "LightSensor: active" );
             sensorManager.registerListener(lightSensorEventListener,
                     lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }

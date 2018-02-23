@@ -573,6 +573,23 @@ $app->post('/events/new_event', function() use ($app) {
 });
 
 /* * *
+ * delete event
+ */
+$app->post('/events/delete_event', function() use ($app) {
+    // check for required params
+    verifyRequiredParams(array('id'));
+
+    // reading post params
+    $id = $app->request->post('id');
+
+    $db = new DbHandler();
+    $response = $db->deleteEvent($id);
+
+    // echo json response
+    echoRespnse(200, $response);
+});
+
+/* * *
  * fetching all events
  */
 $app->get('/events', function() {

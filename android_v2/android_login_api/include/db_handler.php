@@ -467,6 +467,32 @@ class DbHandler {
         return $response;
     }
 	
+	// deleting event
+    public function deleteEvent($id) {
+        $response = array();
+
+		// insert query
+		$stmt = $this->conn->prepare("DELETE FROM events WHERE event_id = ?");
+		$stmt->bind_param("s", $id);
+
+		$result = $stmt->execute();
+
+		$stmt->close();
+
+		// Check for successful insertion
+		if ($result) {
+			// User successfully inserted
+			$response["error"] = false;
+			$response["message"] = "Success!";
+		} else {
+			// Failed to create user
+			$response["error"] = true;
+			$response["message"] = "Oops! An error occurred while registereing";
+		}
+
+        return $response;
+    }
+	
 	// fetching all events
     public function getAllEvents() {
         $stmt = $this->conn->prepare("SELECT * FROM events");

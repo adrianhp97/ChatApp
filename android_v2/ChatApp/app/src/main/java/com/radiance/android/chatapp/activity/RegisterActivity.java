@@ -150,21 +150,22 @@ public class RegisterActivity extends Activity {
 
                         Toast.makeText(getApplicationContext(), "User successfully registered. Verified your email!", Toast.LENGTH_LONG).show();
 
-//                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-//                                "mailto", email, null));
-//                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Verified Account");
-//                        emailIntent.putExtra(Intent.EXTRA_TEXT, verifiedLink);
-//                        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+//                        String to = user.getEmail();
+//                        String subject = "Verified email account";
+//                        String message = textMessage.getText().toString();
+//
+//                        Intent email = new Intent(Intent.ACTION_SEND);
+//                        email.putExtra(Intent.EXTRA_EMAIL, new String[]{ to});
+//                        //email.putExtra(Intent.EXTRA_CC, new String[]{ to});
+//                        //email.putExtra(Intent.EXTRA_BCC, new String[]{to});
+//                        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+//                        email.putExtra(Intent.EXTRA_TEXT, message);
 
-//                        try {
-//                            GMailSender sender = new GMailSender("username@gmail.com", "password");
-//                            sender.sendMail("This is Subject",
-//                                    "This is Body",
-//                                    "user@gmail.com",
-//                                    "user@yahoo.com");
-//                        } catch (Exception e) {
-//                            Log.e("SendMail", e.getMessage(), e);
-//                        }
+                        //need this to prompts email client only
+//                        email.setType("message/rfc822");
+
+//                        startActivity(Intent.createChooser(email, "Choose an Email client :"));
+
 
                         // Launch login activity
                         Intent intent = new Intent(

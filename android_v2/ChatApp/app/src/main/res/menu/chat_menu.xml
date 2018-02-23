@@ -7,4 +7,9 @@
         android:orderInCategory="100"
         android:title="@string/invite_room_chat"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/sent_mail"
+        android:orderInCategory="100"
+        android:title="@string/sent_mail"
+        app:showAsAction="never" />
 </menu>

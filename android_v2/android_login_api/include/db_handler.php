@@ -442,27 +442,27 @@ class DbHandler {
     }
 
     // creating new event
-    public function createEvent($name, $start, $end, $location) {
+    public function createEvent($name, $desc, $start, $end, $location) {
         $response = array();
 
-		// insert query
-		$stmt = $this->conn->prepare("INSERT INTO events(name, start_at, end_at, location) values(?, ?, ?, ?)");
-		$stmt->bind_param("ssss", $name, $start, $end, $location);
+        // insert query
+        $stmt = $this->conn->prepare("INSERT INTO events(name, description, start_at, end_at, location) values(?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $name, $desc, $start, $end, $location);
 
-		$result = $stmt->execute();
+        $result = $stmt->execute();
 
-		$stmt->close();
+        $stmt->close();
 
-		// Check for successful insertion
-		if ($result) {
-			// User successfully inserted
-			$response["error"] = false;
-			$response["message"] = "Success!";
-		} else {
-			// Failed to create user
-			$response["error"] = true;
-			$response["message"] = "Oops! An error occurred while registereing";
-		}
+        // Check for successful insertion
+        if ($result) {
+            // User successfully inserted
+            $response["error"] = false;
+            $response["message"] = "Success!";
+        } else {
+            // Failed to create user
+            $response["error"] = true;
+            $response["message"] = "Oops! An error occurred while registereing";
+        }
 
         return $response;
     }

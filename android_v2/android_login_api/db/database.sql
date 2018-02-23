@@ -44,22 +44,20 @@ CREATE TABLE users(
 
 
 CREATE TABLE `events` (
-  `event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
+  `description` text NOT NULL,
   `start_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `end_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `location` varchar(300) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`event_id`)
+  `location` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `events` (`event_id`, `name`, `start_at`, `end_at`, `location`, `created_at`) VALUES
-(1, 'Keliling Papua', '2018-04-04 13:13:12', '0000-00-00 00:00:00', '', '2018-04-04 06:57:40'),
-(2, 'Student Summit Bandung', '2018-04-14 13:13:13', '0000-00-00 00:00:00', '', '2018-04-04 06:57:40'),
-(3, 'Nasi Padang Gratis', '2020-04-04 13:13:13', '0000-00-00 00:00:00', '', '2018-04-04 06:57:40'),
-(8, 'Arctic Expedition', '2018-02-20 12:55:00', '2027-01-03 23:10:00', 'Arctic', '2018-02-20 12:56:24'),
-(9, 'Invest in Indonesia', '2018-02-21 12:55:00', '2025-02-24 16:02:00', 'Indonesia', '2018-02-20 13:03:38'),
-(10, 'Seattle Teathre', '2018-02-20 13:11:00', '2018-02-20 13:11:00', 'A', '2018-02-20 13:12:01');
+INSERT INTO `events` (`event_id`, `name`, `description`, `start_at`, `end_at`, `location`, `created_at`) VALUES
+(1, 'Keliling Papua', 'Mengelilingi Papua 100x Hingga Menguasai Freeport beserta seluruh properties miliknya.', '2018-02-23 07:29:06', '2018-02-21 10:25:13', '-1.0616390466778358,97.7134494110942', '2018-04-04 06:57:40'),
+(2, 'Vacation with Intern', 'Ayo kita pergi ke mana aja boleh, yang penting kalian bahagia :D', '2018-02-23 07:30:37', '2018-02-28 13:21:00', '-1,100', '2018-04-04 06:57:40'),
+(3, 'Nasi Padang Gratis', 'Makan bareng-bareng di dunia dan diakhirat hingga kenyang tanpa ada rasa lapar lagi selamalamalamalamalamanyahhh~', '2019-04-04 13:13:13', '2030-08-12 17:00:00', '20.112,9.0101', '2018-04-04 06:57:40'),
+(4, 'Makan Orang', 'Ayo kita makan makan orang di festival cannibal bersama CEO mikrosopt USSR :O', '2018-02-23 08:00:00', '2018-05-22 17:00:00', '18.902375205984804,-96.36404044926165', '2018-02-23 07:41:24');
 
  
 ALTER TABLE messages
@@ -77,4 +75,11 @@ ALTER TABLE messages
 ALTER TABLE chat_room_by_user
   ADD CONSTRAINT chatbyuser_ibfk_3 FOREIGN KEY (chat_room_id) REFERENCES chat_rooms (chat_room_id),
   ADD CONSTRAINT chatbyuser_ibfk_2 FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`event_id`);
+
+ALTER TABLE `events`
+  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+COMMIT;
 

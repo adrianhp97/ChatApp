@@ -1,9 +1,11 @@
 package com.radiance.android.chatapp.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -345,6 +347,24 @@ public class ChatRoomActivity extends AppCompatActivity {
                 Intent intentSettings = new Intent(this, InviteRoomActivity.class);
                 intentSettings.putExtra("chat_room_id", chatRoomId);
                 startActivity(intentSettings);
+                break;
+            case R.id.sent_mail:
+                Intent intent = getIntent();
+                String selfUserEmail = MyApplication.getInstance().getPrefManager().getUser().getEmail();
+                Log.e(TAG, "test");
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse("mailto:developer@example.com"));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, intent.getStringExtra("name"));
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Edit text hear");
+
+                try {
+                    startActivity(emailIntent);
+                } catch (ActivityNotFoundException e) {
+                    //TODO: Handle case where no email app is available
+                    Log.e(TAG, "Email error: " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Email error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
                 break;
         }
         return super.onOptionsItemSelected(menuItem);

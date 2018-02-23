@@ -43,9 +43,11 @@ import com.radiance.android.chatapp.app.MyApplication;
 public class CreateEventActivity extends AppCompatActivity {
     private String TAG = CreateEventActivity.class.getSimpleName();
     private Calendar myCalendar;
-    private EditText name, location, sTime, sDate, eTime, eDate;
-    private TextInputLayout nameLayout, locationLayout, sDateLayout, sTimeLayout, eDateLayout, eTimeLayout;
+    private EditText name, desc, location, sTime, sDate, eTime, eDate;
+    private TextInputLayout nameLayout, descLayout, locationLayout, sDateLayout, sTimeLayout, eDateLayout, eTimeLayout;
     private Button btn;
+    private EditText locationText;
+    private Intent intentMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,26 @@ public class CreateEventActivity extends AppCompatActivity {
         EditText endTimeText= (EditText) findViewById(R.id.input_etimeEvent);
         showTimePicker(endTimeText, "End Time");
 
+        locationText= (EditText) findViewById(R.id.input_locationEvent);
+        locationText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapIntent = new Intent(CreateEventActivity.this, MapsActivity.class);
+                mapIntent.putExtra("actCode", "eventCreate");
+                startActivity(mapIntent);
+            }
+        });
+
+        intentMap = getIntent();
+        String latitude = intentMap.getStringExtra("latitude");
+        String longitude = intentMap.getStringExtra("longitude");
+        Log.e(TAG,"LATLONG : " + latitude + " : "+longitude);
+        if(latitude != null && longitude != null){
+            setLocationOnField(Double.parseDouble(latitude), Double.parseDouble(longitude));
+        }
+
         nameLayout = (TextInputLayout) findViewById(R.id.input_event_name);
+        descLayout = (TextInputLayout) findViewById(R.id.input_event_desc);
         sDateLayout = (TextInputLayout) findViewById(R.id.input_event_sdate);
         sTimeLayout = (TextInputLayout) findViewById(R.id.input_event_stime);
         eDateLayout = (TextInputLayout) findViewById(R.id.input_event_edate);
@@ -75,6 +96,7 @@ public class CreateEventActivity extends AppCompatActivity {
         locationLayout = (TextInputLayout) findViewById(R.id.input_event_location);
 
         name = (EditText) findViewById(R.id.input_nameEvent);
+        desc = (EditText) findViewById(R.id.input_descEvent);
         sDate = (EditText) findViewById(R.id.input_sdateEvent);
         sTime = (EditText) findViewById(R.id.input_stimeEvent);
         eDate = (EditText) findViewById(R.id.input_edateEvent);
@@ -84,6 +106,7 @@ public class CreateEventActivity extends AppCompatActivity {
         btn = (Button) findViewById(R.id.btn_createEvent);
 
         name.addTextChangedListener(new MyTextWatcher(name));
+        desc.addTextChangedListener(new MyTextWatcher(desc));
         sDate.addTextChangedListener(new MyTextWatcher(sDate));
         sTime.addTextChangedListener(new MyTextWatcher(sTime));
         eDate.addTextChangedListener(new MyTextWatcher(eDate));
@@ -97,6 +120,10 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public  void setLocationOnField(double latitude, double longitude){
+        locationText.setText(latitude + "," + longitude);
     }
 
     private void showDatePicker(final EditText text, final String str){
@@ -167,12 +194,13 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     private void createEvent() {
-        if (!validateName() || !validateSDate() || !validateSTime() ||
+        if (!validateName() || !validateDesc() || !validateSDate() || !validateSTime() ||
                 !validateEDate() || !validateETime() || !validateLocation()) {
             return;
         }
 
         final String nameF = name.getText().toString();
+        final String descF = desc.getText().toString();
         final String startF = sDate.getText().toString() + " " + sTime.getText().toString();
         final String endF = eDate.getText().toString() + " " + eTime.getText().toString();
         final String locationF = location.getText().toString();
@@ -189,16 +217,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
                     // check for error flag
                     if (obj.getBoolean("error") == false) {
-                        // user successfully logged in
-
-//                        JSONObject eventObj = obj.getJSONObject("event");
-//                        Event event = new Event(eventObj.getString("event_id"),
-//                                eventObj.getString("name"),
-//                                eventObj.getString("start_at"),
-//                                eventObj.getString("end_at"),
-//                                eventObj.getString("location"),
-//                                eventObj.getString("timestamp"));
-
                         // start main activity
                         startActivity(new Intent(getApplicationContext(), EventsActivity.class));
                         finish();
@@ -227,6 +245,7 @@ public class CreateEventActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("name", nameF);
+                params.put("desc", descF);
                 params.put("start_at", startF);
                 params.put("end_at", endF);
                 params.put("location", locationF);
@@ -253,6 +272,18 @@ public class CreateEventActivity extends AppCompatActivity {
             return false;
         } else {
             nameLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validateDesc() {
+        if (desc.getText().toString().trim().isEmpty()) {
+            descLayout.setError(getString(R.string.err_msg_general));
+            requestFocus(desc);
+            return false;
+        } else {
+            descLayout.setErrorEnabled(false);
         }
 
         return true;
@@ -335,6 +366,9 @@ public class CreateEventActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.input_nameEvent:
                     validateName();
+                    break;
+                case R.id.input_descEvent:
+                    validateDesc();
                     break;
                 case R.id.input_sdateEvent:
                     validateSDate();

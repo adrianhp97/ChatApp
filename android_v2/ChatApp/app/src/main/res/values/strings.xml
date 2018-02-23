@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase Authentication</string>
+    <string name="app_name">Chat App</string>
 
     <string name="label_google_sign_in">Firebase + Google Sign In</string>
     <string name="desc_google_sign_in">Use a Google Sign In credential to authenticate with Firebase.</string>
@@ -179,13 +179,15 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_create_new_room">CreateNewRoomActivity</string>
-    <string name="title_activity_join_room">JoinRoomActivity</string>
-    <string name="title_activity_invite_room">InviteRoomActivity</string>
+    <string name="title_activity_create_new_room">Create New Team</string>
+    <string name="title_activity_join_room">Join Team</string>
+    <string name="title_activity_invite_room">Invite New Member</string>
 
     <!-- Event -->
     <string name="tab_events">Events</string>
     <string name="invite_room_chat">Invite</string>
+    <string name="sent_mail">Sent an Email</string>
     <string name="err_msg_general">Enter valid input</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCO5QGUUFrKpa3v287Aao5DNcsTe0FhJpI</string>
 
 </resources>

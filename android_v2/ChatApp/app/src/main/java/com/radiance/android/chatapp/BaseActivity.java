@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 
+import com.radiance.android.chatapp.R;
+
 public class BaseActivity extends AppCompatActivity {
 
     @VisibleForTesting

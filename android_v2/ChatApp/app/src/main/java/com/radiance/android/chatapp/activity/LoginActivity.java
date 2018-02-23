@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,16 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.radiance.android.chatapp.R;
 import com.radiance.android.chatapp.app.EndPoints;
 import com.radiance.android.chatapp.app.MyApplication;
@@ -33,10 +44,15 @@ public class LoginActivity extends Activity {
     private static final String TAG = LoginActivity.class.getSimpleName();
     private Button btnLogin;
     private Button btnLinkToRegister;
+    private SignInButton sign_in_button;
     private EditText inputEmail;
     private EditText inputPassword;
     private ProgressDialog pDialog;
     private SessionManager session;
+    private static final int RC_SIGN_IN = 9001;
+
+    private GoogleSignInClient mGoogleSignInClient;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +63,7 @@ public class LoginActivity extends Activity {
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
+        sign_in_button = (SignInButton) findViewById(R.id.sign_in_button);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -62,6 +79,17 @@ public class LoginActivity extends Activity {
             startActivity(intent);
             finish();
         }
+
+        //Build Google Sign in options
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        //get Sign in client
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        //get currently signed in user returns null if there is no logged in user
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
 
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +108,14 @@ public class LoginActivity extends Activity {
                             "Please enter the credentials!", Toast.LENGTH_LONG)
                             .show();
                 }
+            }
+
+        });
+
+        sign_in_button.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                signIn();
             }
 
         });
@@ -183,6 +219,131 @@ public class LoginActivity extends Activity {
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("password", password);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void signIn() {
+        Log.d(TAG, "Sign in Response: initiate sign in");
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    //method to sign out
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+            .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        //updateUI(null);
+                    }
+                }
+            });
+    }
+
+    //Handle sign in results
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount  account = completedTask.getResult(ApiException.class);
+            // Signed in successfully, show authenticated UI.
+            signOut();
+            registerUser(account.getDisplayName(), account.getEmail(), account.getId());
+            checkLogin(account.getEmail(), account.getId());
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+        }
+    }
+
+    private void registerUser(final String name, final String email,
+                              final String password) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_register";
+
+        pDialog.setMessage("Registering ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Method.POST,
+                EndPoints.REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Register Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // User successfully stored in MySQL
+
+                        session.setLogin(true);
+
+                        JSONObject userObj = jObj.getJSONObject("user");
+                        User user = new User(userObj.getString("user_id"),
+                                userObj.getString("name"),
+                                userObj.getString("email"));
+
+                        // storing user in shared preferences
+                        MyApplication.getInstance().getPrefManager().storeUser(user);
+
+                        Log.e(TAG, "User: " + user.toString());
+
+                        // start main activity
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        finish();
+
+                    } else {
+
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Registration Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("name", name);
                 params.put("email", email);
                 params.put("password", password);
 

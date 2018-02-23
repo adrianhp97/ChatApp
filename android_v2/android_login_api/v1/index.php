@@ -560,12 +560,13 @@ $app->post('/events/new_event', function() use ($app) {
 
     // reading post params
     $name = $app->request->post('name');
+    $desc = $app->request->post('desc');
     $start = $app->request->post('start_at');
     $end = $app->request->post('end_at');
     $location = $app->request->post('location');
 
     $db = new DbHandler();
-    $response = $db->createEvent($name, $start, $end, $location);
+    $response = $db->createEvent($name, $desc, $start, $end, $location);
 
     // echo json response
     echoRespnse(200, $response);
@@ -589,7 +590,10 @@ $app->get('/events', function() {
         $tmp = array();
         $tmp["event_id"] = $event["event_id"];
         $tmp["name"] = $event["name"];
+        $tmp["desc"] = $event["description"];
         $tmp["start_at"] = $event["start_at"];
+        $tmp["end_at"] = $event["end_at"];
+        $tmp["location"] = $event["location"];
         $tmp["created_at"] = $event["created_at"];
         array_push($response["events"], $tmp);
     }

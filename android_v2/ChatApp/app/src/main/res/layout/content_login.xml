@@ -58,7 +58,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:indeterminateTint="@color/colorAccent"
+        android:indeterminateTint="@color/accent_calm"
         android:visibility="gone"
         android:indeterminateTintMode="src_atop" />
 

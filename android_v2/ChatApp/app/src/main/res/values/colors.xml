@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#039BE5</color>
     <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorPrimaryCalm">#699C9E</color>
     <color name="colorAccent">#FFA000</color>
 
     <color name="grey_100">#F5F5F5</color>
@@ -11,8 +12,11 @@
 
     <color name="primary">#E43F3F</color>
     <color name="primary_dark">#E12929</color>
+    <color name="primary_calm">#FBF6F1</color>
+    <color name="primary_calmDark">#EBDCD5</color>
     <color name="primary_darker">#CC1D1D</color>
     <color name="accent">#FFFFFF</color>
+    <color name="accent_calm">#C7DBD5</color>
 
     <color name="black">#000000</color>
     <color name="jet">#222222</color>
@@ -23,6 +27,8 @@
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
     <color name="white">#FFFFFF</color>
+    <color name="grey">#7F858E</color>
+    <color name="rust">#C97F66</color>
 
     <color name="list_divider">#dedede</color>
     <color name="bg_bubble_self">#E1E1E1</color>

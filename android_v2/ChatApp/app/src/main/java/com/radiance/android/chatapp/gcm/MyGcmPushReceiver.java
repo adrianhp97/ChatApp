@@ -79,7 +79,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
      * */
     private void processChatRoomPush(String title, boolean isBackground, String data) {
         if (!isBackground) {
-
+            Log.e(TAG, "chat success broadcast");
             try {
                 JSONObject datObj = new JSONObject(data);
 
@@ -145,7 +145,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
      * */
     private void processUserMessage(String title, boolean isBackground, String data) {
         if (!isBackground) {
-
+            Log.e(TAG, "processUserMessage");
             try {
                 JSONObject datObj = new JSONObject(data);
 
@@ -205,6 +205,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
      * Showing notification with text only
      * */
     private void showNotificationMessage(Context context, String title, String message, String timeStamp, Intent intent) {
+        Log.e(TAG, "showNotificationMessage");
         notificationUtils = new NotificationUtils(context);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationUtils.showNotificationMessage(title, message, timeStamp, intent);
@@ -214,6 +215,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
      * Showing notification with text and image
      * */
     private void showNotificationMessageWithBigImage(Context context, String title, String message, String timeStamp, Intent intent, String imageUrl) {
+        Log.e(TAG, "showNotificationMessageWithBigImage");
         notificationUtils = new NotificationUtils(context);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationUtils.showNotificationMessage(title, message, timeStamp, intent, imageUrl);
